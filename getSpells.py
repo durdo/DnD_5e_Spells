@@ -1,3 +1,5 @@
+#!/usr/bin/python3.5
+
 import lxml.html as lh
 from urllib.request import urlopen
 from urllib.parse import urljoin
