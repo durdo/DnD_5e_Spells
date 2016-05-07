@@ -8,20 +8,41 @@ class playerClass:
     def __init__(self, className, classUrl):
         self.name = className
         self.url = classUrl
-        classSpellList = []
+        self.classSpellList = []
+        self.tree = None
+        self.createClassSpellList()
     def getName(self):
-        return str(self.name)
+        return self.name
     def getUrl(self):
-        return str(self.url)
+        return self.url
+    def getClassSpellList(self):
+        return self.classSpellList
+    def createClassSpellList(self):
+        self.getTree()
+        self.classSpellList = self.tree.xpath('//div[@class="wrapper"]/ul/li/a/text()')
+        print(self.classSpellList)
+    def getTree(self):
+        self.tree = lh.parse(urlopen(self.url)) if self.tree == None else self.tree
+        return self.tree
+
 
 class spell:
     def __init__(self, spellName, spellUrl):
         self.name = spellName
         self.url = spellUrl
+        self.level = ""
+        self.tree = None
     def getName(self):
-        return str(self.name)
+        return self.name
     def getUrl(self):
-        return str(self.url)
+        return self.url
+    def getLevel(self):
+        return self.level
+    def setLevel(self, spellLevel):
+        self.level = spellLevel
+    def getTree(self):
+        self.tree = lh.parse(urlopen(self.url)) if self.tree == None else self.tree
+        return self.tree
 
 class main:
     pageUrl = ""
@@ -66,15 +87,19 @@ class main:
         ur = [urljoin(main.pageUrl,"".join(main.tree.xpath('//a[text()="%s"]/@href' % c))) for c in cl]
         for count, curClass in enumerate(cl):
             main.fullSpellList.append(spell(curClass, ur[count]))
+    @staticmethod
+    def sortFullSpellList():
+        main.fullSpellList.sort(key=lambda spell: spell.name)
 
 main("http://ephe.github.io/grimoire")
 main.createClassList()
 main.createLevelList()
 main.createSpellList()
-print(main.spellLevels)
-print("Class list:")
-print("\n".join(["'" + element.getName() + "' at --> " + element.getUrl() for element in main.classesList]))
-print("\n\nSpell list:")
-print("\n".join(["'" + element.getName() + "' at --> " + element.getUrl() for element in main.fullSpellList]))
+main.sortFullSpellList()
+#print(main.spellLevels)
+#print("Class list:")
+#print("\n".join(["'" + element.getName() + "' at --> " + element.getUrl() for element in main.classesList]))
+#print("\n\nSpell list:")
+#print("\n".join(["'" + element.getName() + "' at --> " + element.getUrl() for element in main.fullSpellList]))
 #[print("\nClass '%s' can be found at:\n%s" % (c.getName(), c.getUrl())) for c in main.getClassesList()]
 #print("\nSpells are divided in the following levels:")
